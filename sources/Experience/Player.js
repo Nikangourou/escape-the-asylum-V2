@@ -130,6 +130,7 @@ export default class Player {
     }
 
     handleJoystickQuickmoveHandler(event) {
+        console.log(event.direction)
         if (event.direction === 'left') {
             console.log('left');
             this.moveRight();
@@ -144,6 +145,7 @@ export default class Player {
         }
         if (event.direction === 'down') {
             console.log('down');
+            this.AudioManager.playSlide();
             this.animationManager.playAnimation('run_slide', false)
         }
     }
@@ -252,6 +254,8 @@ export default class Player {
                 });
             },
         });
+
+        this.AudioManager.playJump();
     }
 
     collide() {
