@@ -183,6 +183,9 @@ display:flex;
 justify-content:center;
 align-items:center;
 opacity:0;
+flex-direction:column;
+gap:20px;
+font-size: 50px;
 }
 
 .win__red{
@@ -191,9 +194,19 @@ opacity:0;
     position:absolute;
     top:0;
     left:0;
-    color:#D81F26;
+    color:white;
+
     display:flex;
 justify-content:center;
 align-items:center;
 opacity:0;
+flex-direction:column;
+gap:20px;
+font-size: 50px;
+}
+
+.result{
+    display:flex;
+    align-items:center;
+    gap:16px;
 }
