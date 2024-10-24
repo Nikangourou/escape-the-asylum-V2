@@ -113,20 +113,20 @@ export default class Player {
         this.axis[`joystick${this.id}`].addEventListener("joystick:quickmove",(e) => this.handleJoystickQuickmoveHandler(e));
 
         // set key arro left to move left without joystick
-        // document.addEventListener('keydown', (e) => {
-        //     if (e.key === 'ArrowLeft') {
-        //         this.moveRight();
-        //     }
-        //     if (e.key === 'ArrowRight') {
-        //         this.moveLeft();
-        //     }
-        //     if (e.key === 'ArrowUp') {
-        //         this.jump();
-        //     }
-        //     if (e.key === 'ArrowDown') {
-        //         this.animationManager.playAnimation('run_slide', false)
-        //     }
-        // });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                this.moveRight();
+            }
+            if (e.key === 'ArrowRight') {
+                this.moveLeft();
+            }
+            if (e.key === 'ArrowUp') {
+                this.jump();
+            }
+            if (e.key === 'ArrowDown') {
+                this.animationManager.playAnimation('run_slide', false)
+            }
+        });
     }
 
     handleJoystickQuickmoveHandler(event) {
