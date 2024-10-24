@@ -1,8 +1,19 @@
+@font-face {
+    font-family: 'Monocraft';
+    src: url('/fonts/Monocraft.woff') format('woff2'),
+        url('/fonts/Monocraft.woff2') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+
 *
 {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Monocraft', monospace;
 }
 
 html,
