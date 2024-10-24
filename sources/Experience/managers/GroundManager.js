@@ -26,7 +26,15 @@ export default class GroundManager {
         this.chairMesh = this.experience.resources.items['chairMesh'];
         this.pizzaMesh = this.experience.resources.items['pizzaMesh'];
         this.slideMesh = this.experience.resources.items['slideMesh'];
-        this.slideMeshOrange = this.experience.resources.items['slideMeshOrange'];
+        this.corridor1_1 = this.experience.resources.items['corridor1_1'];
+        this.corridor1_2 = this.experience.resources.items['corridor1_2'];
+        this.corridor2_1 = this.experience.resources.items['corridor2_1'];
+        this.corridor2_2 = this.experience.resources.items['corridor2_2'];
+        this.corridor3_1 = this.experience.resources.items['corridor3_1'];
+        this.corridor3_2 = this.experience.resources.items['corridor3_2'];
+        this.corridor4_1 = this.experience.resources.items['corridor4_1']; 
+        this.corridor4_2 = this.experience.resources.items['corridor4_2'];
+
     }
 
     initializeGround() {
@@ -46,21 +54,280 @@ export default class GroundManager {
 
         switch (selectedModel) {
             case this.stretcherMesh:
-                floor = this.prepareStretcherMesh(positionZ);
+                if (this.nbTilesGenerated > this.changeBiomEach * 2) {
+                    floor = this.prepareCorridor3_2Mesh(positionZ);
+                } else if (this.nbTilesGenerated > this.changeBiomEach) {
+                    floor = this.prepareCorridor3_1Mesh(positionZ);
+                } else {
+                    floor = this.prepareStretcherMesh(positionZ);
+                }
+                
                 break;
             case this.chairMesh:
-                floor = this.prepareChairMesh(positionZ);
+                if (this.nbTilesGenerated > this.changeBiomEach * 2) {
+                    floor = this.prepareCorridor4_2Mesh(positionZ);
+                } else if (this.nbTilesGenerated > this.changeBiomEach) {
+                    floor = this.prepareCorridor4_1Mesh(positionZ);
+                } else {
+                    floor = this.prepareChairMesh(positionZ);
+                }
+                break;
             case this.slideMesh:
                 floor = this.prepareSlideMesh(positionZ);
                 break;
             default:
-                floor = this.prepareFloorMesh(positionZ);
+                if (this.nbTilesGenerated > this.changeBiomEach) {
+                    floor = this.prepareCorridor1_2Mesh(positionZ);
+                } else {
+                    floor = this.prepareFloorMesh(positionZ);
+                }
                 break;
         }
 
         this.nbTilesGenerated++;
 
+        if (this.nbTilesGenerated > this.changeBiomEach * 3) {
+            this.nbTilesGenerated = 0;
+        }
+
         return floor;
+    }
+
+    prepareCorridor1_2Mesh(positionZ) {
+
+        let meshClone
+
+        if (this.nbTilesGenerated > this.changeBiomEach * 2) {
+            meshClone = this.corridor2_2.scene.clone(true);
+        } else {
+            meshClone = this.corridor1_2.scene.clone(true);
+        }
+
+        meshClone.position.set(0, 0, positionZ);
+
+        // Array to store colliders
+        const colliders = [];
+
+        // Define obstacle positions and dimensions
+        const obstacles = [
+            { x: 1, y: 1.5, z: 2.5, width: 2, height: 0.8, depth: 0.1 },
+            { x: -1, y: 1.5, z: -1, width: 2, height: 0.8, depth: 0.2 },
+            { x: 0, y: 1, z: -3.2, width: 1, height: 0.8, depth: 2 },
+            { x: -1.5, y: 1, z: -10, width: 1.5, height: 2, depth: 0.2 },
+            { x: 1.5, y: 1, z: -10, width: 1.5, height: 2, depth: 0.2 },
+        ];
+
+        for (const obstacle of obstacles) {
+            const collider = new THREE.Mesh(
+                new THREE.BoxGeometry(obstacle.width, obstacle.height, obstacle.depth),
+                new THREE.MeshBasicMaterial({ visible: false, color: 0xff0000 })
+            );
+            collider.position.set(obstacle.x, obstacle.y, obstacle.z);
+            collider.userData.isCollider = true;
+            meshClone.add(collider);
+            colliders.push(collider);
+        }
+
+        // Create pizzas with colliders
+        let pizza1 = this.createPizzaWithCollider(-1.5, 0.1, -2);
+        let pizza2 = this.createPizzaWithCollider(-1.5, 0.1, 8);
+
+        let pizza1Mesh = pizza1.mesh;
+        let pizza2Mesh = pizza2.mesh;
+
+        pizza1Mesh.add(pizza1.collider);
+        pizza2Mesh.add(pizza2.collider);
+
+        meshClone.add(pizza1Mesh, pizza2Mesh);
+        colliders.push(pizza1.collider, pizza2.collider);
+
+        meshClone.userData.colliders = colliders;
+
+        return meshClone;
+    }
+
+    prepareCorridor3_1Mesh(positionZ) {
+
+        let meshClone = this.corridor3_1.scene.clone(true);
+        meshClone.position.set(0, 0, positionZ);
+
+        // Array to store colliders
+        const colliders = [];
+
+        // Define obstacle positions and dimensions
+        const obstacles = [
+            { x: -1.5, y: 1.5, z: 2, width: 2, height: 0.8, depth: 0.1 },
+            { x: 1.5, y: 1, z: 2, width: 2, height: 2, depth: 0.1 },
+            { x: -1, y: 1, z: -6.5, width: 2, height: 2, depth: 0.2 },
+            { x: -1.5, y: 1, z: -10, width: 1.5, height: 2, depth: 0.2 },
+            { x: 1.5, y: 1, z: -10, width: 1.5, height: 2, depth: 0.2 },
+        ];
+
+        for (const obstacle of obstacles) {
+            const collider = new THREE.Mesh(
+                new THREE.BoxGeometry(obstacle.width, obstacle.height, obstacle.depth),
+                new THREE.MeshBasicMaterial({ visible: false, color: 0xff0000 })
+            );
+            collider.position.set(obstacle.x, obstacle.y, obstacle.z);
+            collider.userData.isCollider = true;
+            meshClone.add(collider);
+            colliders.push(collider);
+        }
+
+        // Create pizzas with colliders
+        let pizza1 = this.createPizzaWithCollider(-1.5, 0.1, -2);
+        let pizza2 = this.createPizzaWithCollider(-1.5, 0.1, 8);
+
+        let pizza1Mesh = pizza1.mesh;
+        let pizza2Mesh = pizza2.mesh;
+
+        pizza1Mesh.add(pizza1.collider);
+        pizza2Mesh.add(pizza2.collider);
+
+        meshClone.add(pizza1Mesh, pizza2Mesh);
+        colliders.push(pizza1.collider, pizza2.collider);
+
+        meshClone.userData.colliders = colliders;
+
+        return meshClone;
+    }
+
+    prepareCorridor3_2Mesh(positionZ) {
+
+        let meshClone = this.corridor3_2.scene.clone(true);
+        meshClone.position.set(0, 0, positionZ);
+
+        // Array to store colliders
+        const colliders = [];
+
+        // Define obstacle positions and dimensions
+        const obstacles = [
+            { x: -1.5, y: 1.2, z: 5.5, width: 2, height: 0.1, depth: 0.1 },
+            { x: -1.5, y: 1.5, z: -4.5, width: 2, height: 0.8, depth: 0.1 },
+            { x: 1.5, y: 1, z: -.5, width: 2, height: 2, depth: 0.1 },
+            { x: -1.5, y: 1, z: -10, width: 1.5, height: 2, depth: 0.2 },
+            { x: 1.5, y: 1, z: -10, width: 1.5, height: 2, depth: 0.2 },
+        ];
+
+        for (const obstacle of obstacles) {
+            const collider = new THREE.Mesh(
+                new THREE.BoxGeometry(obstacle.width, obstacle.height, obstacle.depth),
+                new THREE.MeshBasicMaterial({ visible: true, color: 0xff0000 })
+            );
+            collider.position.set(obstacle.x, obstacle.y, obstacle.z);
+            collider.userData.isCollider = true;
+            meshClone.add(collider);
+            colliders.push(collider);
+        }
+
+        // Create pizzas with colliders
+        let pizza1 = this.createPizzaWithCollider(-1.5, 0.1, -2);
+        let pizza2 = this.createPizzaWithCollider(-1.5, 0.1, 8);
+
+        let pizza1Mesh = pizza1.mesh;
+        let pizza2Mesh = pizza2.mesh;
+
+        pizza1Mesh.add(pizza1.collider);
+        pizza2Mesh.add(pizza2.collider);
+
+        meshClone.add(pizza1Mesh, pizza2Mesh);
+        colliders.push(pizza1.collider, pizza2.collider);
+
+        meshClone.userData.colliders = colliders;
+
+        return meshClone;
+    }
+
+    prepareCorridor4_1Mesh(positionZ) {
+
+        let meshClone = this.corridor4_1.scene.clone(true);
+        meshClone.position.set(0, 0, positionZ);
+
+        // Array to store colliders
+        const colliders = [];
+
+        // Define obstacle positions and dimensions
+        const obstacles = [
+            { x: 0, y: 1.5, z: -8.5, width: 2, height: 0.8, depth: 0.1 },
+            { x: 1, y: 1, z: -0.5, width: 2, height: 2, depth: 0.1 },
+            { x: -1.5, y: 1, z: 7.5, width: 1, height: 2, depth: 2},
+            { x: -1.5, y: 1, z: -10, width: 1.5, height: 2, depth: 0.2 },
+            { x: 1.5, y: 1, z: -10, width: 1.5, height: 2, depth: 0.2 },
+        ];
+
+        for (const obstacle of obstacles) {
+            const collider = new THREE.Mesh(
+                new THREE.BoxGeometry(obstacle.width, obstacle.height, obstacle.depth),
+                new THREE.MeshBasicMaterial({ visible: false, color: 0xff0000 })
+            );
+            collider.position.set(obstacle.x, obstacle.y, obstacle.z);
+            collider.userData.isCollider = true;
+            meshClone.add(collider);
+            colliders.push(collider);
+        }
+
+        // Create pizzas with colliders
+        let pizza1 = this.createPizzaWithCollider(0, 0.1, -2);
+        let pizza2 = this.createPizzaWithCollider(1.5, 0.1, 7);
+
+        let pizza1Mesh = pizza1.mesh;
+        let pizza2Mesh = pizza2.mesh;
+
+        pizza1Mesh.add(pizza1.collider);
+        pizza2Mesh.add(pizza2.collider);
+
+        meshClone.add(pizza1Mesh, pizza2Mesh);
+        colliders.push(pizza1.collider, pizza2.collider);
+
+        meshClone.userData.colliders = colliders;
+
+        return meshClone;
+    }
+
+    prepareCorridor4_2Mesh(positionZ) {
+
+        let meshClone = this.corridor4_2.scene.clone(true);
+        meshClone.position.set(0, 0, positionZ);
+
+        // Array to store colliders
+        const colliders = [];
+
+        // Define obstacle positions and dimensions
+        const obstacles = [
+            { x: 1.25, y: 1.5, z: 2, width: 2, height: 0.8, depth: 0.1 },
+            { x: -1.25, y: 1, z: 2, width: 2, height: 2, depth: 0.1 },
+            { x: 0, y: 1, z: -7, width: 2, height: 2, depth: 0.1 },
+            { x: -1.5, y: 1, z: -10, width: 1.5, height: 2, depth: 0.2 },
+            { x: 1.5, y: 1, z: -10, width: 1.5, height: 2, depth: 0.2 },
+        ];
+
+        for (const obstacle of obstacles) {
+            const collider = new THREE.Mesh(
+                new THREE.BoxGeometry(obstacle.width, obstacle.height, obstacle.depth),
+                new THREE.MeshBasicMaterial({ visible: false, color: 0xff0000 })
+            );
+            collider.position.set(obstacle.x, obstacle.y, obstacle.z);
+            collider.userData.isCollider = true;
+            meshClone.add(collider);
+            colliders.push(collider);
+        }
+
+        // Create pizzas with colliders
+        let pizza1 = this.createPizzaWithCollider(-1.5, 0.1, -2);
+        let pizza2 = this.createPizzaWithCollider(-1.5, 0.1, 8);
+
+        let pizza1Mesh = pizza1.mesh;
+        let pizza2Mesh = pizza2.mesh;
+
+        pizza1Mesh.add(pizza1.collider);
+        pizza2Mesh.add(pizza2.collider);
+
+        meshClone.add(pizza1Mesh, pizza2Mesh);
+        colliders.push(pizza1.collider, pizza2.collider);
+
+        meshClone.userData.colliders = colliders;
+
+        return meshClone;
     }
 
     prepareStretcherMesh(positionZ) {
@@ -195,13 +462,14 @@ export default class GroundManager {
 
     prepareSlideMesh(positionZ) {
         let slideMesh;
-        if (this.nbTilesGenerated > this.changeBiomEach) {
-            slideMesh = this.slideMeshOrange.scene.clone(true);
+        if (this.nbTilesGenerated > this.changeBiomEach * 2) {
+            slideMesh = this.corridor2_1.scene.clone(true);
         } else if (this.nbTilesGenerated > this.changeBiomEach) {
-            slideMesh = this.slideMesh.scene.clone(true);
+            slideMesh = this.corridor1_1.scene.clone(true);
         } else {
             slideMesh = this.slideMesh.scene.clone(true);
         }
+
         slideMesh.position.set(0, 0, positionZ);
 
         // Array to store colliders
@@ -244,6 +512,8 @@ export default class GroundManager {
 
         return slideMesh;
     }
+
+
 
     createPizzaWithCollider(x, y, z) {
         const pizza = this.pizzaMesh.scene.clone(true);
@@ -288,7 +558,7 @@ export default class GroundManager {
     rotatePizzas(tile, deltaTime) {
         // Find all pizza meshes and rotate them
         tile.traverse((child) => {
-            if (child.isMesh && child.name === 'pizza') {             
+            if (child.isMesh && child.name === 'pizza') {
                 child.parent.rotation.y += deltaTime * 0.001;
             }
         });
