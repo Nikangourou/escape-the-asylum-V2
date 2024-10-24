@@ -246,7 +246,7 @@ export default class GroundManager {
     createPizzaWithCollider(x, y, z) {
         const pizza = this.pizzaMesh.scene.clone(true);
         pizza.scale.set(0.2, 0.2, 0.2);
-        pizza.position.set(x, y, z);
+        pizza.position.set(x, y + .5, z);
 
         const collider = new THREE.Mesh(
             new THREE.BoxGeometry(1.5, 1.5, 1.3),
@@ -259,7 +259,7 @@ export default class GroundManager {
         return { mesh: pizza, collider: collider };
     }
 
-    update(playerManager) {
+    update(playerManager, deltaTime) {
         const playerZ = playerManager.getLeadPlayerPosition().z;
 
         if (playerZ > this.groundTiles[1].position.z + this.tileLength / 2) {
@@ -274,8 +274,22 @@ export default class GroundManager {
             this.groundTiles.push(newTile);
         }
 
+        for (const tile of this.groundTiles) {
+            // Rotate pizzas
+            this.rotatePizzas(tile, deltaTime);
+        }
+
         // Collision detection
         this.checkCollisions(playerManager);
+    }
+
+    rotatePizzas(tile, deltaTime) {
+        // Find all pizza meshes and rotate them
+        tile.traverse((child) => {
+            if (child.isMesh && child.name === 'pizza') {             
+                child.parent.rotation.y += deltaTime * 0.001;
+            }
+        });
     }
 
     checkCollisions(playerManager) {
