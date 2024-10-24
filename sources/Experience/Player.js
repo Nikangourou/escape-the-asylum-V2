@@ -112,7 +112,7 @@ export default class Player {
 
         this.axis[`joystick${this.id}`].addEventListener("joystick:quickmove",(e) => this.handleJoystickQuickmoveHandler(e));
 
-        // set key arro left to move left without joystick
+        // // set key arro left to move left without joystick
         // document.addEventListener('keydown', (e) => {
         //     if (e.key === 'ArrowLeft') {
         //         this.moveRight();
@@ -124,6 +124,7 @@ export default class Player {
         //         this.jump();
         //     }
         //     if (e.key === 'ArrowDown') {
+        //         this.AudioManager.playSlide();
         //         this.animationManager.playAnimation('run_slide', false)
         //     }
         // });
