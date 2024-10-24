@@ -113,20 +113,22 @@ export default class Player {
         this.axis[`joystick${this.id}`].addEventListener("joystick:quickmove",(e) => this.handleJoystickQuickmoveHandler(e));
 
         // set key arro left to move left without joystick
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft') {
-                this.moveRight();
-            }
-            if (e.key === 'ArrowRight') {
-                this.moveLeft();
-            }
-            if (e.key === 'ArrowUp') {
-                this.jump();
-            }
-            if (e.key === 'ArrowDown') {
-                this.animationManager.playAnimation('run_slide', false)
-            }
-        });
+        // document.addEventListener('keydown', (e) => {
+        //     if (e.key === 'ArrowLeft') {
+        //         this.moveRight();
+        //     }
+        //     if (e.key === 'ArrowRight') {
+        //         this.moveLeft();
+        //     }
+        //     if (e.key === 'ArrowUp') {
+        //         this.jump();
+        //     }
+        //     if (e.key === 'ArrowDown') {
+
+        //         this.AudioManager.playSlide();
+        //         this.animationManager.playAnimation('run_slide', false)
+        //     }
+        // });
     }
 
     handleJoystickQuickmoveHandler(event) {
@@ -187,10 +189,31 @@ export default class Player {
                 } else if (this.id === 2) {
                     this.animationManager.playAnimation('grab', false);
                     const player1 = this.players[0];
+
+
+                    const hearts = document.querySelector(`.hearts .heart:nth-child(${player1.life}) path`);
+
+                    gsap.to(hearts, {   
+                        fill: 'white',
+                        duration: 1.5,
+                        scale:.7,
+                       
+                        ease:"elastic.inOut(1,0.3)"
+                    });
+                    
+                    this.AudioManager.playStab();
                     player1.life--;
+
 
                     if (player1.life === 0) {
                         console.log(`Player ${this.id} won!`);
+                        //get .win__wrapper and display it block
+                        const winWrapper = document.querySelector('.win__wrapper');
+                        winWrapper.style.display = 'block';
+                        // get win__red and set opacity to 1
+                        const winRed = document.querySelector('.win__red');
+                        winRed.style.opacity = 1;
+                        
                         player1.animationManager.playAnimation('fall', false);
                         player1.animationManager.end = true;
                         this.isStop = true;

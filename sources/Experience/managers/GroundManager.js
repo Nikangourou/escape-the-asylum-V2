@@ -583,6 +583,7 @@ export default class GroundManager {
                                 this.AudioManager.playEating();
                                 tile.remove(pizzaMesh);
                             } else if (!player.isImmune) {
+                                this.AudioManager.playCollision();
                                 player.collide();
                             }
                         }

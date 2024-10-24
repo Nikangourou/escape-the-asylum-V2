@@ -7,6 +7,9 @@ export default class AudioManager {
       this.eatingAudio = new Audio('assets/audio/eat.wav');
       this.jumpAudio = new Audio('assets/audio/jump.wav');
       this.slideAudio = new Audio('assets/audio/slide.wav');
+      this.collisionAudio = new Audio('assets/audio/collision.wav');
+      this.stabAudio = new Audio('assets/audio/stab.wav');
+      this.screamAudio = new Audio('assets/audio/scream.mp3');
 
       this.ambientAudio.loop = true;  // Set ambient audio to loop
     }
@@ -23,9 +26,6 @@ export default class AudioManager {
       this.runner__one.loop = true;
       this.runner__two.loop = true;
       this.ambientAudio.loop = true;
-
-
-
     }
 
     stopAmbient() {
@@ -35,24 +35,34 @@ export default class AudioManager {
 
     playClick() {
       this.clickAudio.play();
-      console.log('click');
     }
 
     playEating() {  
       // Add eating audio
       this.eatingAudio.play();
-      console.log('eating');
     }
 
     playJump() {
       this.jumpAudio.play();
-      console.log('jump');
     }
 
     playSlide() {
       this.slideAudio.play();
-      console.log('slide');
     }
+
+    playCollision() {
+      this.collisionAudio.play();
+    }
+
+    playStab() {
+      this.stabAudio.play();
+
+      //delay of 1 second
+      setTimeout(() => {
+        this.screamAudio.play();
+      }, 500);
+    }
+    
     update(delta) {
       // You could manage audio effects or adjustments here based on delta
     }
