@@ -59,7 +59,7 @@ export default class GameLogic {
     }
 
     startTimer() {
-        this.seconds = 3;  // Reset the timer
+        this.seconds = 5;  // Reset the timer 
     
         let timerWrapper = document.querySelector('.timer__wrapper');
         let timer = document.querySelector('.timer__wrapper p');
