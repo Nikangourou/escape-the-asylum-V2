@@ -212,7 +212,7 @@ export default class GroundManager {
         for (const obstacle of obstacles) {
             const collider = new THREE.Mesh(
                 new THREE.BoxGeometry(obstacle.width, obstacle.height, obstacle.depth),
-                new THREE.MeshBasicMaterial({ visible: true, color: 0xff0000 })
+                new THREE.MeshBasicMaterial({ visible: false, color: 0xff0000 })
             );
             collider.position.set(obstacle.x, obstacle.y, obstacle.z);
             collider.userData.isCollider = true;
