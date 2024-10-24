@@ -32,8 +32,10 @@ export default class Player {
         this.timeSinceLastPress = 0;
         this.buttonPressInterval = 0.2; // Seconds
         this.isImmune = false;
+        this.food = 10
+        this.maxFood = 20
 
-        this.AudioManager= new AudioManager();
+        this.AudioManager = new AudioManager();
 
         this.playerManager = _options.playerManager; //To optimize
 
@@ -43,7 +45,7 @@ export default class Player {
         this.isStop = false;
         this.life = 3;
 
-        this.AudioManager= new AudioManager();
+        this.AudioManager = new AudioManager();
 
         this.playerManager = _options.playerManager; //To optimize
 
@@ -51,7 +53,7 @@ export default class Player {
         this.boundStartGame = this.startGame.bind(this);
         this.boundHandleInput = this.handleInput.bind(this);
 
-        this.AudioManager= new AudioManager();
+        this.AudioManager = new AudioManager();
 
         this.playerManager = _options.playerManager; //To optimize
 
@@ -110,25 +112,25 @@ export default class Player {
             this.instance.addEventListener('keydown', this.boundHandleInput);
         }
 
-        this.axis[`joystick${this.id}`].addEventListener("joystick:quickmove",(e) => this.handleJoystickQuickmoveHandler(e));
+        this.axis[`joystick${this.id}`].addEventListener("joystick:quickmove", (e) => this.handleJoystickQuickmoveHandler(e));
 
         // set key arro left to move left without joystick
-        // document.addEventListener('keydown', (e) => {
-        //     if (e.key === 'ArrowLeft') {
-        //         this.moveRight();
-        //     }
-        //     if (e.key === 'ArrowRight') {
-        //         this.moveLeft();
-        //     }
-        //     if (e.key === 'ArrowUp') {
-        //         this.jump();
-        //     }
-        //     if (e.key === 'ArrowDown') {
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                this.moveRight();
+            }
+            if (e.key === 'ArrowRight') {
+                this.moveLeft();
+            }
+            if (e.key === 'ArrowUp') {
+                this.jump();
+            }
+            if (e.key === 'ArrowDown') {
 
-        //         this.AudioManager.playSlide();
-        //         this.animationManager.playAnimation('run_slide', false)
-        //     }
-        // });
+                this.AudioManager.playSlide();
+                this.animationManager.playAnimation('run_slide', false)
+            }
+        });
     }
 
     handleJoystickQuickmoveHandler(event) {
@@ -185,35 +187,58 @@ export default class Player {
                 }
 
                 if (this.id === 1) {
-                    this.animationManager.playAnimation('dodge_right', false);
+                    // this.animationManager.playAnimation('dodge_right', false);
                 } else if (this.id === 2) {
                     this.animationManager.playAnimation('grab', false);
                     const player1 = this.players[0];
 
-
                     const hearts = document.querySelector(`.hearts .heart:nth-child(${player1.life}) path`);
 
-                    gsap.to(hearts, {   
+                    gsap.to(hearts, {
                         fill: 'white',
+                        strokeWidth: 2,
                         duration: 1.5,
-                        scale:.7,
-                       
-                        ease:"elastic.inOut(1,0.3)"
+                        ease: "elastic.inOut(1,0.3)"
                     });
-                    
+
+                    const redGradient = document.querySelector('.red-vignette');
+
+                    gsap.to(redGradient, {
+                        opacity: 1,
+                        duration: 0.5,
+                        ease: "elastic.inOut(1,0.3)",
+                        onComplete: () => {
+                            gsap.to(redGradient, {
+                                opacity: 0,
+                                duration: 1,
+                                ease: "elastic.inOut(1,0.3)",
+                            });
+                        }
+                    });
+
                     this.AudioManager.playStab();
                     player1.life--;
 
 
                     if (player1.life === 0) {
                         console.log(`Player ${this.id} won!`);
-                        //get .win__wrapper and display it block
                         const winWrapper = document.querySelector('.win__wrapper');
-                        winWrapper.style.display = 'block';
-                        // get win__red and set opacity to 1
                         const winRed = document.querySelector('.win__red');
-                        winRed.style.opacity = 1;
-                        
+
+                        gsap.to(winWrapper, {
+                            display: 'block',
+                            delay: 2
+                        });
+
+                        gsap.to(winRed, {
+                            opacity: 1,
+                            duration: 1,
+                            scale: 1.2,
+                            ease: "elastic.out(1, 0.3)",
+                            delay: 2
+                        });
+
+
                         player1.animationManager.playAnimation('fall', false);
                         player1.animationManager.end = true;
                         this.isStop = true;
@@ -301,7 +326,7 @@ export default class Player {
         }
 
         // descelerer le joueur
-        this.targetSpeed = Math.max(this.targetSpeed - this.deceleration, this.minSpeed);
+        this.targetSpeed = this.minSpeed;
 
         // Désactiver l'immunité après la durée spécifiée
         setTimeout(() => {
@@ -309,8 +334,33 @@ export default class Player {
         }, immunityDuration);
     }
 
-    eat() {
-        // console.log(`Player ${this.id} ate a pizza!`);
+    updateFood(nb) {
+        if (this.id === 1) {
+
+            let segments = document.querySelectorAll(`.jauge .segment`);
+
+            this.food += nb;
+
+            if (this.food > this.maxFood) {
+                this.food = this.maxFood;
+            }
+
+            if (this.food < 0) {
+                this.food = 0;
+                console.log(this.maxSpeed);
+                this.maxSpeed = 3;
+            } else {
+                this.maxSpeed = 6;
+            }
+
+
+            // reverse the array to start from the end
+            segments = Array.from(segments).reverse();
+
+            segments.forEach((segment, index) => {
+                segment.style.opacity = index < this.food ? 1 : 0.2;
+            });
+        }
     }
 
     stop() {
@@ -330,7 +380,7 @@ export default class Player {
         return this.speed;
     }
 
-    removeStartScreen(){
+    removeStartScreen() {
         console.log("removeStartScreen")
         this.splashScreen = document.querySelector('.splashscreen');
 
@@ -392,6 +442,8 @@ export default class Player {
         if (!this.isStop) {
             // this.speed = 0;
             this.model.position.z += this.speed * deltaSeconds;
+            // food -1 every 3 seconds
+            this.updateFood(-1 * deltaSeconds / 3);
         }
     }
 }

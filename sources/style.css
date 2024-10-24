@@ -107,6 +107,15 @@ canvas {
     display:flex;
     gap:5px;
 }
+
+.jauge{
+    width: 18px;
+}
+
+.jauge .segment{
+   opacity: 0.2;
+}
+
 .controls__left__bottom,.controls__right__bottom{
    
     display:flex;
@@ -209,4 +218,14 @@ font-size: 50px;
     display:flex;
     align-items:center;
     gap:16px;
+}
+
+.red-vignette{
+    width:100%;
+    height:100%;
+    position:absolute;
+    top:0;
+    left:0;
+    background-image: radial-gradient(circle, transparent 40%, #D81F26 100%);
+    opacity:0;
 }

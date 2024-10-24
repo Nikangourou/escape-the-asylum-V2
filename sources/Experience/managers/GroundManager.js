@@ -32,7 +32,7 @@ export default class GroundManager {
         this.corridor2_2 = this.experience.resources.items['corridor2_2'];
         this.corridor3_1 = this.experience.resources.items['corridor3_1'];
         this.corridor3_2 = this.experience.resources.items['corridor3_2'];
-        this.corridor4_1 = this.experience.resources.items['corridor4_1']; 
+        this.corridor4_1 = this.experience.resources.items['corridor4_1'];
         this.corridor4_2 = this.experience.resources.items['corridor4_2'];
 
     }
@@ -61,7 +61,7 @@ export default class GroundManager {
                 } else {
                     floor = this.prepareStretcherMesh(positionZ);
                 }
-                
+
                 break;
             case this.chairMesh:
                 if (this.nbTilesGenerated > this.changeBiomEach * 2) {
@@ -250,7 +250,7 @@ export default class GroundManager {
         const obstacles = [
             { x: 0, y: 1.5, z: -8.5, width: 2, height: 0.8, depth: 0.1 },
             { x: 1, y: 1, z: -0.5, width: 2, height: 2, depth: 0.1 },
-            { x: -1.5, y: 1, z: 7.5, width: 1, height: 2, depth: 2},
+            { x: -1.5, y: 1, z: 7.5, width: 1, height: 2, depth: 2 },
             { x: -1.5, y: 1, z: -10, width: 1.5, height: 2, depth: 0.2 },
             { x: 1.5, y: 1, z: -10, width: 1.5, height: 2, depth: 0.2 },
         ];
@@ -569,6 +569,9 @@ export default class GroundManager {
             // Check if the tile has colliders
             if (tile.userData.colliders) {
                 for (const collider of tile.userData.colliders) {
+                    // Skip this collider if it has already been collected
+                    if (collider.userData.collected) continue;
+
                     const colliderBox = new THREE.Box3().setFromObject(collider);
 
                     for (const player of playerManager.players) {
@@ -578,10 +581,14 @@ export default class GroundManager {
                         if (colliderBox.intersectsBox(playerBox)) {
                             // console.log('Collision detected with collider and player ' + player.id);
                             if (collider.name === 'pizza') {
-                                player.eat();
-                                const pizzaMesh = collider.parent;
-                                this.AudioManager.playEating();
-                                tile.remove(pizzaMesh);
+                                if (player.id === 1) {
+                                    player.updateFood(1);
+                                    const pizzaMesh = collider.parent;
+                                    this.AudioManager.playEating();
+                                    tile.remove(pizzaMesh);
+                                    // Mark the pizza as collected
+                                    collider.userData.collected = true;
+                                }
                             } else if (!player.isImmune) {
                                 this.AudioManager.playCollision();
                                 player.collide();
