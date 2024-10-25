@@ -66,7 +66,10 @@ export default class Player {
     }
 
     loadModel() {
-        const modelKey = 'playerRig';
+        let modelKey = 'player2';
+        if (this.id === 1) {
+            modelKey = 'player1';
+        }
         const resourceModel = this.resources.items[modelKey];
 
         if (!resourceModel) {
