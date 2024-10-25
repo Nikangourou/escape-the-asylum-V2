@@ -1,7 +1,7 @@
 export default class AudioManager {
     constructor() {
       this.clickAudio = new Audio('assets/audio/click.mp3');
-      this.ambientAudio = new Audio('assets/audio/ambient.mp3');  // Added ambient audio
+      this.ambientAudio = new Audio('assets/audio/ambientv2.mp3');  // Added ambient audio
       this.runner__one = new Audio('assets/audio/foot_one.mp3');
       this.runner__two = new Audio('assets/audio/foot_two.mp3');
       this.eatingAudio = new Audio('assets/audio/eat.wav');
