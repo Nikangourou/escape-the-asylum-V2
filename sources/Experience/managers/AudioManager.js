@@ -58,9 +58,10 @@ export default class AudioManager {
       this.stabAudio.play();
 
       //delay of 1 second
-      setTimeout(() => {
+      // setTimeout(() => {
+        this.screamAudio.volume = 1;
         this.screamAudio.play();
-      }, 500);
+      // }, 300);
     }
     
     update(delta) {
